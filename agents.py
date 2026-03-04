@@ -23,7 +23,7 @@ class MedicalWorkflowManager:
         prompt = f"Phân tích input người dùng, phân loại domain và tạo query mở rộng (HyDE).\nInput: {query}"
         decision = structured_llm.invoke(prompt)
 
-        valid_domains = ["tim_mach", "ho_hap", "tieu_hoa", "than_kinh", "xuong_khop", "da_lieu", "nhi_khoa"]
+        valid_domains = ["tim_mach", "ho_hap", "tieu_hoa", "than_kinh", "xuong_khop", "da_lieu", "nhi_khoa","hiv_aids","phuc_hoi_chuc_nang","tam_than","huyet_hoc", "duoc_hoc" ]
         filtered_domains = [{"name": s.name, "is_core_issue": s.is_core_issue} for s in decision.analyzed_specialties if
                             s.name in valid_domains]
 
