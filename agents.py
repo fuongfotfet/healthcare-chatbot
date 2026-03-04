@@ -23,7 +23,7 @@ class MedicalWorkflowManager:
         prompt = f"Phân tích input người dùng, phân loại domain và tạo query mở rộng (HyDE).\nInput: {query}"
         decision = structured_llm.invoke(prompt)
 
-        valid_domains = ["tim_mach", "ho_hap", "tieu_hoa", "than_kinh", "xuong_khop"]
+        valid_domains = ["tim_mach", "ho_hap", "tieu_hoa", "than_kinh", "xuong_khop", "da_lieu", "nhi_khoa"]
         filtered_domains = [{"name": s.name, "is_core_issue": s.is_core_issue} for s in decision.analyzed_specialties if
                             s.name in valid_domains]
 
@@ -107,8 +107,7 @@ class MedicalWorkflowManager:
         # Bypass Logic cho trường hợp Single-Domain
         if len(reports) == 1:
             single_domain = list(reports.keys())[0]
-            final_response = reports[
-                                 single_domain] + "\n\n⚠️ System Disclaimer: Phân tích được tạo bởi AI chỉ mang tính chất tham khảo. Vui lòng tham vấn chuyên gia y tế cho các quyết định lâm sàng."
+            final_response = reports[single_domain] + "\n\n⚠️ System Disclaimer: Phân tích được tạo bởi AI chỉ mang tính chất tham khảo. Vui lòng tham vấn chuyên gia y tế cho các quyết định lâm sàng."
             return {"specialty_reports": reports, "response": final_response}
 
         return {"specialty_reports": reports}

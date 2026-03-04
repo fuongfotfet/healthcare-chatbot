@@ -10,7 +10,7 @@ class RouterState(TypedDict):
     response: str
 
 class SpecialtyDetail(BaseModel):
-    name: str = Field(description="Tên chuyên khoa: 'tim_mach', 'ho_hap', 'tieu_hoa', 'than_kinh', 'xuong_khop'.")
+    name: str = Field(description="Tên chuyên khoa: 'tim_mach', 'ho_hap', 'tieu_hoa', 'than_kinh', 'xuong_khop', 'da_lieu', 'nhi_khoa'.")
     is_core_issue: bool = Field(description="Đánh dấu True nếu là vấn đề cấp cứu hoặc cốt lõi.")
 
 class RouteDecision(BaseModel):
