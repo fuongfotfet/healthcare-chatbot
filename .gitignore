@@ -1,0 +1,15 @@
+# Giấu các file chứa mật khẩu
+config.py
+.env
+
+# Giấu file rác
+__pycache__/
+*.pyc
+
+# Giấu các file tài liệu và code cũ không dùng đến
+copd.pdf
+tai_lieu.pdf
+dbykhoa.py
+llmrouting.py
+rag.py
+simplerag.py
