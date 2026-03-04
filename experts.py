@@ -19,7 +19,8 @@ class DomainExpertsNode:
 
         async def generate_single_report(domain_name, context):
             is_core = core_map.get(domain_name, False)
-            role = "🔴 [CORE_ISSUE] (Cốt lõi): Yêu cầu phân tích chuyên sâu." if is_core else "⚪ [MINOR_ISSUE] (Thứ cấp): Tóm tắt ngắn gọn."
+            role = "🔴 [CORE_ISSUE] (Cốt lõi): Yêu cầu phân tích chi tiết và chuyên sâu." if is_core else "⚪ [MINOR_ISSUE] (Thứ cấp): Yêu cầu phân tích chi tiết đầy đủ, không được tóm tắt."
+
             print(f"⚙️ [Expert - {domain_name.upper()}] Processing...")
 
             prompt = f"""Bạn là AI Domain Expert quản lý phân hệ {domain_name.upper()}. {role}

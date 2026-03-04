@@ -10,7 +10,8 @@ class RouterState(TypedDict):
     response: str
 
 class SpecialtyDetail(BaseModel):
-    name: str = Field(description="Tên chuyên khoa: 'tim_mach', 'ho_hap', 'tieu_hoa', 'than_kinh', 'xuong_khop', 'da_lieu', 'nhi_khoa'.")
+    # Đã cập nhật đầy đủ 22 chuyên khoa để LLM biết đường chọn
+    name: str = Field(description="Tên chuyên khoa: 'tim_mach', 'ho_hap', 'tieu_hoa', 'than_kinh', 'xuong_khop', 'da_lieu', 'nhi_khoa', 'hiv_aids', 'huyet_hoc', 'phuc_hoi_chuc_nang', 'duoc_hoc', 'tam_than', 'noi_tiet', 'ung_buou', 'ky_sinh_trung', 'nhiem_khuan', 'dinh_duong', 'y_te_cong_cong', 'truyen_nhiem', 'san_phu_khoa', 'hau_covid', 'cap_cuu'.")
     is_core_issue: bool = Field(description="Đánh dấu True nếu là vấn đề cấp cứu hoặc cốt lõi.")
 
 class RouteDecision(BaseModel):

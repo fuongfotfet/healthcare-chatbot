@@ -17,14 +17,13 @@ class IntentAnalyzerNode:
         prompt = f"Phân tích input người dùng, phân loại domain và tạo query mở rộng (HyDE).\nInput: {query}"
         decision = structured_llm.invoke(prompt)
 
-        # Danh sách 26 chuyên khoa
+        # Danh sách ĐẦY ĐỦ 22 chuyên khoa đã khớp với Database
         valid_domains = [
-            "tim_mach", "noi_tiet", "ung_buou", "ho_hap", "truyen_nhiem",
-            "ky_sinh_trung", "da_lieu", "san_phu_khoa", "nhi_khoa", "hiv_aids",
-            "than_hoc", "huyet_hoc", "nhiem_khuan", "phuc_hoi_chuc_nang",
-            "hau_covid", "duoc_hoc", "dinh_duong", "tam_than", "y_hoc_co_truyen",
-            "phap_y", "nhan_khoa", "tiet_nieu", "gay_me_hoi_suc", "ngoai_khoa",
-            "y_te_cong_cong", "cap_cuu"
+            "tim_mach", "ho_hap", "tieu_hoa", "than_kinh", "xuong_khop",
+            "da_lieu", "nhi_khoa", "hiv_aids", "huyet_hoc", "phuc_hoi_chuc_nang",
+            "duoc_hoc", "tam_than", "noi_tiet", "ung_buou", "ky_sinh_trung",
+            "nhiem_khuan", "dinh_duong", "y_te_cong_cong", "truyen_nhiem",
+            "san_phu_khoa", "hau_covid", "cap_cuu"
         ]
 
         filtered_domains = [{"name": s.name, "is_core_issue": s.is_core_issue}
