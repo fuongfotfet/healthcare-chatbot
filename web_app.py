@@ -48,7 +48,7 @@ if user_query := st.chat_input("Ví dụ: Tôi bị đau thắt ngực trái và
     # 4.2. Khởi động hệ thống Đa đặc vụ (Graph LangChain)
     with st.chat_message("assistant"):
         # Tạo hiệu ứng "Đang suy nghĩ" quay vòng tròn
-        with st.spinner("👨‍⚕️ Các bác sĩ chuyên khoa đang hội chẩn..."):
+        with st.spinner("⚙️ Hệ thống Multi-Agent đang xử lý và tổng hợp dữ liệu..."):
             try:
                 # Ép thư viện Streamlit (đồng bộ) chạy hàm LangGraph (bất đồng bộ)
                 result = asyncio.run(chatbot_engine.app.ainvoke({"query": user_query}))
