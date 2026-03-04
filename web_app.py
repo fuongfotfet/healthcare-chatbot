@@ -10,7 +10,6 @@ st.set_page_config(
 )
 
 st.title("🏥 Trợ lý Y khoa Đa đặc vụ")
-st.caption("Hội chẩn đồng thời 5 chuyên khoa: Tim mạch, Hô hấp, Tiêu hóa, Thần kinh, Xương khớp.")
 
 
 # --- 2. KHỞI TẠO BỘ NÃO AI (Chỉ tải 1 lần) ---
