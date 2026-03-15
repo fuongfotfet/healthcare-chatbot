@@ -1,7 +1,7 @@
 from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import MemorySaver
 from schemas import RouterState
 
-# Import các Objects từ các file riêng biệt
 from llmrouting import IntentAnalyzerNode
 from retrieval import VectorRetrievalNode
 from experts import DomainExpertsNode
@@ -9,35 +9,29 @@ from synthesizer import GlobalSynthesizerNode
 
 
 class MedicalWorkflow:
-    """Bảng mạch chủ (Orchestrator) kết nối các Nodes thành một luồng LangGraph"""
-
     def __init__(self):
         self.router = IntentAnalyzerNode()
         self.retriever = VectorRetrievalNode()
         self.experts = DomainExpertsNode()
         self.synthesizer = GlobalSynthesizerNode()
+
+        self.memory = MemorySaver()
         self.app = self._build_graph()
 
-    # --- Edge Logic (Điều kiện rẽ nhánh) ---
     def route_logic(self, state: RouterState) -> str:
-        if not state["analyzed_specialties"]:
+        if not state.get("analyzed_specialties"):
             return "synthesis_node"
         return "vector_retrieval_node"
 
-    def route_after_experts(self, state: RouterState) -> str:
-        if len(state.get("analyzed_specialties", [])) <= 1:
-            print("🚀 [Bypass Optimizer] Single-domain detected. Bypassing Synthesizer!")
-            return "end"
-        return "synthesis_node"
+    # ĐÃ XÓA HÀM route_after_experts GÂY LỖI ĐI ĐƯỜNG TẮT
 
-    # --- Khâu nối các Module ---
     def _build_graph(self):
-        builder = StateGraph(RouterState)  # type: ignore
+        builder = StateGraph(RouterState)
 
-        builder.add_node("intent_analyzer", self.router.process)  # type: ignore
-        builder.add_node("vector_retrieval", self.retriever.process)  # type: ignore
-        builder.add_node("domain_experts", self.experts.process)  # type: ignore
-        builder.add_node("global_synthesizer", self.synthesizer.process)  # type: ignore
+        builder.add_node("intent_analyzer", self.router.process)
+        builder.add_node("vector_retrieval", self.retriever.process)
+        builder.add_node("domain_experts", self.experts.process)
+        builder.add_node("global_synthesizer", self.synthesizer.process)
 
         builder.add_edge(START, "intent_analyzer")
         builder.add_conditional_edges(
@@ -45,10 +39,11 @@ class MedicalWorkflow:
             {"vector_retrieval_node": "vector_retrieval", "synthesis_node": "global_synthesizer"}
         )
         builder.add_edge("vector_retrieval", "domain_experts")
-        builder.add_conditional_edges(
-            "domain_experts", self.route_after_experts,
-            {"end": END, "synthesis_node": "global_synthesizer"}
-        )
+        builder.add_edge("domain_experts", "global_synthesizer")
+
         builder.add_edge("global_synthesizer", END)
 
-        return builder.compile()
+        return builder.compile(
+            checkpointer=self.memory,
+            interrupt_before=["vector_retrieval"]
+        )

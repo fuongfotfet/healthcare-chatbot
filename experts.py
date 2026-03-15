@@ -1,16 +1,13 @@
 import asyncio
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 import config
 from schemas import RouterState
-
+from prompts import EXPERT_PROMPT
 
 class DomainExpertsNode:
-    """Class quản lý các Đặc vụ AI xử lý độc lập từng chuyên khoa"""
-
     def __init__(self):
         print("⏳ [Experts] Initializing Expert Agents...")
-        self.llm = ChatGoogleGenerativeAI(model=config.LLM_MODEL, temperature=0.1)
-
+        self.llm = ChatOpenAI(model=config.LLM_MODEL, api_key=config.OPENAI_API_KEY, temperature=0.1)
     async def process(self, state: RouterState):
         query = state["query"]
         contexts = state.get("specialty_contexts", {})
@@ -19,12 +16,14 @@ class DomainExpertsNode:
 
         async def generate_single_report(domain_name, context):
             is_core = core_map.get(domain_name, False)
-            role = "🔴 [CORE_ISSUE] (Cốt lõi): Yêu cầu phân tích chi tiết và chuyên sâu." if is_core else "⚪ [MINOR_ISSUE] (Thứ cấp): Yêu cầu phân tích chi tiết đầy đủ, không được tóm tắt."
+            role = "🔴 [CORE_ISSUE]" if is_core else "⚪ [MINOR_ISSUE]"
 
-            print(f"⚙️ [Expert - {domain_name.upper()}] Processing...")
-
-            prompt = f"""Bạn là AI Domain Expert quản lý phân hệ {domain_name.upper()}. {role}
-            [CONTEXT DATA]:\n{context}\n\n[USER INPUT]: {query}"""
+            prompt = EXPERT_PROMPT.format(
+                domain_name=domain_name.upper(),
+                role=role,
+                context=context,
+                query=query
+            )
 
             res = await self.llm.ainvoke(prompt)
             return domain_name, res.content
@@ -33,9 +32,5 @@ class DomainExpertsNode:
         results = await asyncio.gather(*tasks) if tasks else []
         reports = {name: content for name, content in results}
 
-        if len(reports) == 1:
-            single_domain = list(reports.keys())[0]
-            return {"specialty_reports": reports,
-                    "response": reports[single_domain] + "\n\n⚠️ Disclaimer: AI chỉ mang tính tham khảo."}
-
+        # CHỈ TRẢ VỀ REPORTS ĐỂ TRƯỞNG KHOA LÀM VIỆC TIẾP
         return {"specialty_reports": reports}

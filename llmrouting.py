@@ -1,6 +1,7 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 import config
 from schemas import RouterState, RouteDecision
+from prompts import ROUTER_PROMPT
 
 
 class IntentAnalyzerNode:
@@ -8,14 +9,11 @@ class IntentAnalyzerNode:
 
     def __init__(self):
         print("⏳ [Router] Initializing Intent Analyzer...")
-        self.llm = ChatGoogleGenerativeAI(model=config.LLM_MODEL, temperature=0)
+        self.llm = ChatOpenAI(model=config.LLM_MODEL, api_key=config.OPENAI_API_KEY, temperature=0)
 
     def process(self, state: RouterState):
         query = state["query"]
         structured_llm = self.llm.with_structured_output(RouteDecision)
-
-        prompt = f"Phân tích input người dùng, phân loại domain và tạo query mở rộng (HyDE).\nInput: {query}"
-        decision = structured_llm.invoke(prompt)
 
         # Danh sách ĐẦY ĐỦ 22 chuyên khoa đã khớp với Database
         valid_domains = [
@@ -25,6 +23,17 @@ class IntentAnalyzerNode:
             "nhiem_khuan", "dinh_duong", "y_te_cong_cong", "truyen_nhiem",
             "san_phu_khoa", "hau_covid", "cap_cuu"
         ]
+
+        # Biến danh sách trên thành một chuỗi văn bản (VD: "tim_mach, ho_hap, ...")
+        domains_string = ", ".join(valid_domains)
+
+        # GỌI PROMPT TỪ FILE MỚI VÀ TRUYỀN BIẾN VÀO
+        prompt = ROUTER_PROMPT.format(
+            domains_string=domains_string,
+            query=query
+        )
+
+        decision = structured_llm.invoke(prompt)
 
         filtered_domains = [{"name": s.name, "is_core_issue": s.is_core_issue}
                             for s in decision.analyzed_specialties if s.name in valid_domains]
