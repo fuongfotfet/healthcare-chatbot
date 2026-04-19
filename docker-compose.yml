@@ -1,0 +1,20 @@
+services:
+  rag_api:
+    build: .
+    container_name: rag_api_namkhoa
+    command: [ "uvicorn", "app.api:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app" ]
+    env_file:
+      - .env
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # cần cho Docker trên Linux
+    ports:
+      - "8003:8000"
+    volumes:
+      - ./:/app
+    restart: unless-stopped
